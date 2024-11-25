@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"  # Contraseña para root
+      MYSQL_DATABASE: "movie_db"  # Base de datos inicial
+    ports:
+      - "3310:3306"
+    networks:
+      - backend
+
+  app:
+    build: .
+    container_name: spring-movie
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/movie_db"
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "123456"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
